@@ -1,0 +1,39 @@
+# === Phase 1a: AI Command Center DevBox ===
+#
+# This file tells Docker how to run our DevBox container.
+# It solves three key problems:
+#   1. Mounts our projects: Maps your local ~/projects folder into the container.
+#   2. Persists home: Saves the container's home directory so git/npm/pip configs are not lost.
+#   3. Mounts SSH keys: Securely provides our SSH keys to the container for git access.
+
+version: '3.8'
+
+services:
+  # This is the name of our container service
+  devbox:
+    # Tell Docker to build the image from the Dockerfile in this same folder
+    build: .
+    
+    # This is the most important part: Volumes
+    volumes:
+      # 1. Mount your local projects directory into the container
+      #    NOTE: Replace "/home/fragsrus/projects" with the *actual* full path
+      #    to your projects folder on this laptop.
+      - /home/fragsrus/projects:/home/dev/projects
+      
+      # 2. Mount your local SSH keys (read-only for security)
+      #    This allows 'git' inside the container to talk to GitHub.
+      - ~/.ssh:/home/dev/.ssh:ro
+      
+      # 3. Create a persistent "named volume" for the container's home.
+      #    This saves your .gitconfig, .bash_history, npm cache, etc.
+      - devbox-home:/home/dev
+
+    # Keep the container running in the background
+    # This matches the "CMD" in our Dockerfile
+    tty: true
+    stdin_open: true
+
+# Define the named volume we referenced above
+volumes:
+  devbox-home:

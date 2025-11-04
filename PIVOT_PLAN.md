@@ -36,3 +36,75 @@ As a result, we have pivoted to a new, two-phased plan.
 * **Security:** The API Gateway will **not** be public. It will be secured using (at minimum) **API Keys** or, preferably, **IAM Authentication**.
 * **Rate Limits:** The Lambda function will be engineered to handle the Gemini API's free tier rate limits by implementing **exponential backoff with retries**.
 * **IaC:** This entire Phase 2 project *must* be deployed using **Infrastructure as Code** (e.g., Terraform or AWS SAM) to be a valid portfolio piece.
+
+
+---
+
+## Build Log: Phase 1a - Local DevBox Prototype
+
+This phase served as a successful proof-of-concept to build our "DevBox" locally before attempting to deploy it on the Unraid server.
+
+### 1. The Blueprint (`Dockerfile`)
+
+We created a `Dockerfile` based on an `ubuntu:22.04` image. This file defines the container's environment by:
+* Installing all base dependencies (`git`, `python3-pip`, `npm`, `curl`).
+* Installing both the `@google/gemini-cli` and `@anthropic-ai/claude-code` CLIs globally via `npm`.
+* Creating a non-root user named `dev` for security and to prevent permissions issues.
+* Setting the default working directory to `/home/dev/projects`.
+
+### 2. The Build Instructions (`docker-compose.yml`)
+
+We created a `docker-compose.yml` file to manage the container's runtime configuration. This file is critical as it solves our persistence and access problems:
+* **Project Files:** It mounts the host's `~/projects` directory into the container's `/home/dev/projects` directory.
+* **SSH Keys:** It mounts the host's `~/.ssh` directory as `read-only` into the container, allowing `git` inside the container to securely authenticate with GitHub.
+* **Persistence:** It defines a named volume (`devbox-home`) and mounts it to the container's `/home/dev` directory. This ensures that any config files (`.gitconfig`), shell history (`.bash_history`), or credentials we create inside the container are **persistent and survive a reboot.**
+
+### 3. Troubleshooting & Connection
+
+* **Problem:** Encountered a `permission denied` error when attempting to run `docker-compose` due to the `fragsrus` user not being in the `docker` group.
+* **Solution:** We created the `docker` group (`sudo groupadd docker`) and added the user to it (`sudo usermod -aG docker ${USER}`), which resolved all permission errors after a reboot.
+* **Problem 2:** VS Code on the Windows host could not see the Docker container running inside the WSL 2 guest.
+* **Solution 2:** We used the **Remote Development** extension pack, first to **"Connect to WSL,"** and *then* from that new window, we used the **"Attach to Container"** command.
+
+### 4. Phase 1a Outcome
+
+We successfully built the `devbox` container and attached to it from VS Code. We have a fully functional, isolated development environment running in Docker, complete with all our AI tools and `git` access.
+
+---
+
+## Build Log: Phase 1b - Deploy DevBox to Unraid Server
+
+This phase involved migrating our local "DevBox" prototype to a persistent, 24/7 container on the Unraid server.
+
+### 1. Secure Unraid SSH Access
+
+Before connecting VS Code, we had to harden the server's SSH.
+* **Action:** Navigated to `Settings > Management Access` in the Unraid GUI.
+* **Configuration:** SSH was enabled, but password authentication was on by default.
+* **Hardening:** We created a persistent SSH config file at `/boot/config/ssh/sshd_config` and set `PasswordAuthentication no`.
+* **Key Setup (Laptops):** We added our laptop's public SSH key (`~/.ssh/id_ed25519.pub`) to the Unraid server's `authorized_keys` file (`/boot/config/ssh/authorized_keys`).
+* **Test:** We successfully restarted the Unraid SSH service (`/etc/rc.d/rc.sshd restart`) and confirmed we could log in from our laptop's WSL terminal using only the SSH key.
+
+### 2. Deploy Project Files to Unraid
+
+* **Problem:** The Unraid server needed its own GitHub credentials to `git clone` the project.
+* **Solution:** We generated a new SSH keypair *on the Unraid server* (`ssh-keygen -t ed25519 -C "unraid-tower-key"`), added the new public key to GitHub, and then successfully ran `git clone git@github.com:darrel-wallace/ai-agent-command-center.git`.
+
+### 3. Configure the Container for Unraid
+
+* **Share Setup:** We created a new Unraid share named `projects` and set its cache pool to `Prefer` to ensure it runs on the fast SSD cache drive.
+* **Compose File Edit:** We edited the `docker-compose.yml` file on the Unraid server. We changed the project volume mapping from the local laptop path to the new Unraid share path: `- /mnt/user/projects:/home/dev/projects`.
+
+### 4. Build & Run the Container
+
+* **Problem 1:** The `docker-compose` (with hyphen) command was not found.
+* **Solution 1:** We used the modern `docker compose` (with space) command, which is built into the new Docker version.
+* **Problem 2:** The Unraid version of `docker compose` was a non-standard wrapper and did not accept the `-d` or `--build` flags.
+* **Solution 2 (The "Manual" Build):** We abandoned `docker compose` and used the core `docker` commands:
+    1.  **Build:** We successfully built the image from our `Dockerfile` using `docker build -t devbox:latest .`.
+    2.  **Script:** We created a reusable `run.sh` script to stop/remove old containers and launch the new `devbox:latest` image with all the correct volume mounts (`/mnt/user/projects`, `/root/.ssh`, and `devbox-home`).
+    3.  **Launch:** We ran `./run.sh` to start the container.
+
+### 5. Phase 1b Outcome
+
+We successfully built and launched the `devbox` container on the Unraid server. It is now running 24/7, and we have confirmed it appears in the Unraid Docker GUI. The "engine" for our command center is officially online.

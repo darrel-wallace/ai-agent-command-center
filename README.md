@@ -28,3 +28,37 @@ This system is built on a client-server model:
 * **VS Code:** The "command center" interface (the MCP "Host").
 * **AI Models:** Gemini API, Gemini CLI, Claude Code.
 * **Git:** As a core, AI-managed tool for version control.
+
+---
+
+## Build Log: Phase 1a - Local DevBox Prototype
+
+This phase served as a successful proof-of-concept to build our "DevBox" locally before attempting to deploy it on the Unraid server.
+
+### 1. The Blueprint (`Dockerfile`)
+
+We created a `Dockerfile` based on an `ubuntu:22.04` image. This file defines the container's environment by:
+* Installing all base dependencies (`git`, `python3-pip`, `npm`, `curl`).
+* Installing both the `@google/gemini-cli` and `@anthropic-ai/claude-code` CLIs globally via `npm`.
+* Creating a non-root user named `dev` for security and to prevent permissions issues.
+* Setting the default working directory to `/home/dev/projects`.
+
+### 2. The Build Instructions (`docker-compose.yml`)
+
+We created a `docker-compose.yml` file to manage the container's runtime configuration. This file is critical as it solves our persistence and access problems:
+* **Project Files:** It mounts the host's `~/projects` directory into the container's `/home/dev/projects` directory.
+* **SSH Keys:** It mounts the host's `~/.ssh` directory as `read-only` into the container, allowing `git` inside the container to securely authenticate with GitHub.
+* **Persistence:** It defines a named volume (`devbox-home`) and mounts it to the container's `/home/dev` directory. This ensures that any config files (`.gitconfig`), shell history (`.bash_history`), or credentials we create inside the container are **persistent and survive a reboot.**
+
+### 3. Troubleshooting & Connection
+
+* **Problem:** Encountered a `permission denied` error when attempting to run `docker-compose` due to the `fragsrus` user not being in the `docker` group.
+* **Solution:** We created the `docker` group (`sudo groupadd docker`) and added the user to it (`sudo usermod -aG docker ${USER}`), which resolved all permission errors after a reboot.
+* **Problem 2:** VS Code on the Windows host could not see the Docker container running inside the WSL 2 guest.
+* **Solution 2:** We used the **Remote Development** extension pack, first to **"Connect to WSL,"** and *then* from that new window, we used the **"Attach to Container"** command.
+
+### 4. Phase 1a Outcome
+
+We successfully built the `devbox` container and attached to it from VS Code. We have a fully functional, isolated development environment running in Docker, complete with all our AI tools and `git` access.
+
+We are now ready to proceed to **Phase 1b:** Deploying this container on the Unraid server.

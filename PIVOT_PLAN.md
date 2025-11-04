@@ -107,4 +107,29 @@ Before connecting VS Code, we had to harden the server's SSH.
 
 ### 5. Phase 1b Outcome
 
+---
+
+## Build Log: Phase 1c - Connect Command Center (VS Code)
+
+This phase completed the centralized development environment by linking the local VS Code client to the remote Docker container, thus solving the multi-device problem.
+
+### 1. SSH Configuration and Connection
+
+* **Action:** We configured the local VS Code client to securely access the Unraid server using the pre-existing SSH keys.
+* **Method:** We added the Unraid server as an SSH Target in the VS Code "Remote Explorer" using the server's local IP address and the `root` user (`root@<IP>`).
+* **Platform Select:** VS Code correctly identified the target as a **Linux** environment.
+
+### 2. Container Attachment
+
+* **Action:** Once connected to the Unraid host via SSH, we used the VS Code Remote Explorer to view the running Docker containers.
+* **Result:** We successfully used the **"Attach to Container"** command to open a new VS Code window.
+* **Final State:** The new window operates entirely inside the `devbox` container, providing a terminal with all tools (`git`, `gemini-cli`, `claude-cli`) and access to the shared Unraid project files (`/mnt/user/projects`).
+* **Confirmation:** The prompt `dev@<container-ID>:~$` confirmed successful login as the secure, non-root user (`dev`).
+
+### 3. Phase 1 Conclusion
+
+**Phase 1 is 100% complete.** The system is now a resilient, centralized, and consistent development environment accessible from any local client.
+
+---
+
 We successfully built and launched the `devbox` container on the Unraid server. It is now running 24/7, and we have confirmed it appears in the Unraid Docker GUI. The "engine" for our command center is officially online.

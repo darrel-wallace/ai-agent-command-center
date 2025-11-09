@@ -1,32 +1,42 @@
-# Project Case Study: AI-Agent Command Center
+# Project Case Study: AI Agent Command Center (Centralized DevOps Workflow)
 
 ### Executive Summary
 
-* **The Problem:** Modern AI workflows are disjointed. A "Team Lead" (the user) must manually copy-paste information between multiple, separate tools: a strategic chat AI (like Gemini), a code-focused AI (like Claude Code), a terminal (for `git` commands), and a code editor (like VS Code). This is inefficient, error-prone, and not scalable, especially when working across multiple devices.
-* **The Solution:** I architected and built a centralized, secure "command center" to orchestrate a multi-model, multi-tool AI workflow. This system uses a local Unraid server as the "engine" and VS Code as the "dashboard," allowing me to securely manage all my tools and AI workers from a single, consistent interface on any of my devices.
-* **The Outcome:** A seamless, professional workflow where I (as the "Team Lead") can manage my "Project Manager" AI, my "Senior Dev" AI, and my "Junior Dev" AI from one chat panel. The AI "PM" can now securely execute `git` commands, read/write files, and orchestrate other AI models on my central server, all with my explicit permission.
+* **The Problem:** Traditional AI workflows force the user (the "Team Lead") to manually juggle multiple disconnected tools—web chat for strategy, local CLIs for execution, and separate terminals for Git. This is inefficient, non-persistent, and fails to demonstrate crucial cloud engineering skills.
+* **The Solution:** I architected a multi-device, centralized **DevOps Command Center** using established industry tools. The architecture separates the project into a consistent **Remote Dev Environment (Phase 1)** and a portfolio-ready **Serverless Cloud Agent (Phase 2)**.
+* **The Outcome:** A resilient, professional, and cost-optimized workflow accessible from any laptop. This project directly demonstrates advanced skills in **Systems Architecture, Dockerization, Infrastructure as Code (IaC), and Cloud Resource Optimization.**
 
 ---
 
-### System Architecture
+## Phase 1: The Centralized Dev Environment
 
-This system is built on a client-server model:
+**(STATUS: 100% COMPLETE)**
 
-1.  **The "Engine" (Unraid Server):** A Docker container running on Unraid hosts the central **MCP (Model Context Protocol) Server**. This "bridge" container has access to all the project files and "tools" (Git, Gemini CLI, Claude Code).
-2.  **The "Secure Connection" (VPN/Twingate):** A secure network layer (e.g., WireGuard or Twingate) ensures that my "engine" is only accessible to me, whether I'm at home or working remotely. This prevents unauthorized access to my local AI tools.
-3.  **The "Dashboard" (VS Code):** On any of my laptops, VS Code acts as the "command center." Its AI chat extension (the "Host") is configured to connect to my secure Unraid server's IP address instead of the public cloud.
-4.  **The "Workforce" (AI Models):**
-    * **AI Project Manager (Gemini API):** The main AI in the VS Code chat, which now has access to the MCP server's "tools" (e.g., `run_shell_command`, `read_file`).
-    * **AI Workers (Gemini/Claude CLIs):** Tools that the "PM" can call via the `run_shell_command` tool to perform specialized tasks like research or analysis.
+This phase established a single, consistent development environment by migrating local tools to an always-on Unraid Docker container, resolving the multi-device and persistence problem.
 
-### Key Technologies Used
+### Key Technologies Used:
+* **Docker/Unraid:** Hosting and isolation for the central dev environment.
+* **VS Code Remote - SSH:** Connecting the laptop UI to the remote container engine.
+* **AI Tooling:** Gemini CLI & Claude Code (installed within the container).
 
-* **Unraid (or any Docker host):** For running the central server.
-* **Docker:** To containerize and isolate the MCP server and its tools.
-* **MCP (Model Context Protocol):** The open-source "bridge" standard.
-* **VPN (WireGuard) / Zero-Trust (Twingate):** For secure remote access.
-* **VS Code:** The "command center" interface (the MCP "Host").
-* **AI Models:** Gemini API, Gemini CLI, Claude Code.
-* **Git:** As a core, AI-managed tool for version control.
+---
 
-We are now ready to proceed to **Phase 1b:** Deploying this container on the Unraid server.
+## Phase 2: The Serverless AI Agent on AWS (The Portfolio Project)
+
+**(STATUS: Starting Now)**
+
+This phase builds the high-value, resume-ready **cloud application** that integrates four advanced **Cloud Resume Challenge (CRC) Mods**.
+
+### IaC Tool Selected: **AWS SAM (Serverless Application Model)**
+
+| Integrated Mod | Skill Demonstrated | Component |
+| :--- | :--- | :--- |
+| **Automation Nation** | IaC for Front End & CI/CD | S3, CloudFront deployment. |
+| **Check Your Privilege**| **Security:** Least Privilege on IAM | Lambda IAM Roles. |
+| **Monitor Lizard** | **Observability:** Monitoring & Alerting | CloudWatch Alarms on Lambda errors/latency. |
+| **All The World's A Stage**| **CI/CD Maturity:** Multi-Stage Pipeline | Separate **Test** and **Production** AWS environments. |
+
+### Key Mitigations:
+* **Cost:** Designed for **AWS Always Free Tier** (Lambda/API Gateway).
+* **Security:** Implemented **API Throttling** and will use **IAM Authentication**.
+* **Resilience:** Lambda code will include **Exponential Backoff** for external API calls (Gemini API).

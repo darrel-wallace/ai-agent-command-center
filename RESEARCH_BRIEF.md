@@ -3,15 +3,6 @@
 ## Project Overview
 Research and analysis to identify the optimal off-road-capable tow vehicle for overlanding adventures, tailored to specific requirements and use cases.
 
-## User Interaction Preferences
-**CRITICAL: Always follow these response guidelines:**
-
-1. **For lists of questions:** Ask them one at a time, allowing for incremental adjustments rather than presenting a "wall of text."
-
-2. **For lists of steps:** First provide a summary of what's to follow, allow me to adjust if needed, and then proceed to work through the steps one at a time.
-
-3. **General approach:** Keep responses conversational and interactive, adjusting the process as we go rather than front-loading everything.
-
 ## Core Requirements
 
 ### Primary Use Case
@@ -187,19 +178,3 @@ Mid-size and light full-size trucks have surprisingly similar fuel economy:
 - **Skid plates:** "Full coverage" → **Refined to:** Single lightweight aluminum plate in critical area
 - **Rear bumper:** Heavy-duty → **Refined to:** Not needed for mission profile
 - **Load distribution:** Refined with clear truck/trailer packing strategy
-
-## Next Steps in Research
-
-1. Continue developing vehicle candidates across all build philosophy categories
-2. Focus on mid-tier trims (XLT, LT) that balance comfort and payload
-3. Calculate 5-year total cost of ownership (purchase + modifications + operating costs)
-4. Develop phased modification plans for each candidate
-5. Create comparison framework for final decision
-
-## Important Methodology Notes
-
-- Always include specific details of what factory off-road packages contain
-- Calculate NET payload impact (package weight vs. aftermarket alternative)
-- Prioritize meeting requirements safely and efficiently
-- When options are close, ask user for preference and discuss trade-offs collaboratively
-- Never quote or reproduce copyrighted content - always paraphrase and cite sources

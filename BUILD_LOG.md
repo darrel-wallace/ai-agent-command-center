@@ -48,3 +48,11 @@
 | **SSH Test** | `ssh root@<IP>` | **SUCCESS.** Confirmed key-based login from laptop to Unraid. |
 | **Final Connection** | `Remote Explorer > Attach to Container` | **SUCCESS.** Established the multi-layered connection (Windows > WSL > SSH > Docker) to the DevBox. |
 | **Model Downgrade** | `hit a usage limit for 2.5 pro and am now on 2.5 flash model` | **Observed:** Confirmed free-tier model capacity and successful automatic failover to the Flash model. |
+
+### Final Build Log & Outcome: Tools Installed
+
+The DevBox image was successfully finalized, including all necessary tools:
+
+* **AWS CLI & SAM CLI:** Installed using official installers/pip, preparing for Phase 2 IaC deployment.
+* **Nano/Utilities Fix:** We solved the `command not found` error by manually attaching as `root` (using `docker exec -it -u root devbox /bin/bash`) and installing `nano`, `less`, `zip`, `unzip`, and `tree` using `apt update` and `apt install`.
+* **Result:** The DevBox is now running with the correct, least-privilege configuration, fully equipped for both AI and AWS work.

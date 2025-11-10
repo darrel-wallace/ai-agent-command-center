@@ -6,8 +6,6 @@
 #   2. Persists home: Saves the container's home directory so git/npm/pip configs are not lost.
 #   3. Mounts SSH keys: Securely provides our SSH keys to the container for git access.
 
-version: '3.8'
-
 services:
   # This is the name of our container service
   devbox:
@@ -19,7 +17,7 @@ services:
       # 1. Mount your local projects directory into the container
       #    NOTE: Replace "/home/fragsrus/projects" with the *actual* full path
       #    to your projects folder on this laptop.
-      - /home/fragsrus/projects:/home/dev/projects
+      - /mnt/user/projects:/home/dev/projects
       
       # 2. Mount your local SSH keys (read-only for security)
       #    This allows 'git' inside the container to talk to GitHub.
